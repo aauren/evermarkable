@@ -63,6 +63,19 @@ func SaveSecretInStore(secretName string, secret string) error {
 	return keyring.Set(serviceName, secretName, secret)
 }
 
+func DeleteSecretFromStore(secretName string) error {
+	if secretNames, err := decodeSecretNames(secretName, ""); err == nil {
+		for _, secretName := range secretNames {
+			if err := keyring.Delete(serviceName, secretName); err != nil {
+				return fmt.Errorf("error deleting partial key: %v", err)
+			}
+		}
+		return nil
+	}
+
+	return keyring.Delete(serviceName, secretName)
+}
+
 func ErrorIsNotFound(err error) bool {
 	return errors.Is(err, keyring.ErrNotFound)
 }

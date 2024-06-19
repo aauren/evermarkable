@@ -16,15 +16,27 @@ var (
 		Long:  `Authenticate to remarkable and store the valid tokens in OS's keyring`,
 		Run:   AuthRun,
 	}
+	authClear bool
 )
 
 //nolint:gochecknoinits // We don't need to check inits for cmd files
 func init() {
 	RemarkableCommand.AddCommand(authCommand)
+
+	authCommand.PersistentFlags().BoolVar(&authClear, "clear", false, "clear authentication token")
 }
 
 func AuthRun(cobraCmd *cobra.Command, args []string) {
 	ctx := cmdsupport.InitContext(cmdsupport.Config)
+
+	if authClear {
+		err := api.ClearTokens()
+		if err != nil {
+			klog.Errorf("could not clear tokens from os keyring: %v", err)
+		}
+		klog.Infof("Successfully cleared tokens from Remarkable")
+		os.Exit(0)
+	}
 
 	tokens, err := api.LoadTokens()
 	if err != nil {

@@ -44,6 +44,21 @@ func AuthenticateHTTP(httpClientCtx *HTTPClientCtx, reAuth bool) error {
 	return nil
 }
 
+func ClearTokens() error {
+	err := keyring.DeleteSecretFromStore(model.DeviceTokenSecName)
+	if err != nil {
+		return fmt.Errorf("could not delete device token from store: %v", err)
+	}
+
+	err = keyring.DeleteSecretFromStore(model.UserTokenSecName)
+	if err != nil {
+		return fmt.Errorf("could not delete user token from store: %v", err)
+	}
+
+	return nil
+
+}
+
 func LoadTokens() (*authToken, error) {
 	token := authToken{}
 
