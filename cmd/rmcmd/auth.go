@@ -3,7 +3,7 @@ package rmcmd
 import (
 	"os"
 
-	"github.com/aauren/evermarkable/cmd"
+	"github.com/aauren/evermarkable/pkg/cmdsupport"
 	"github.com/aauren/evermarkable/pkg/remarkable/api"
 	"github.com/spf13/cobra"
 	"k8s.io/klog/v2"
@@ -24,7 +24,7 @@ func init() {
 }
 
 func AuthRun(cobraCmd *cobra.Command, args []string) {
-	ctx := cmd.InitContext()
+	ctx := cmdsupport.InitContext(cmdsupport.Config)
 
 	tokens, err := api.LoadTokens()
 	if err != nil {

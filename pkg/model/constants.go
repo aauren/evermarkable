@@ -1,6 +1,11 @@
 package model
 
 const (
+	// ******************* GENERAL CONSTANTS *******************
+	// Constants related to CLI and Config
+	EnvPrefix = "EM_"
+
+	// ******************* REMARKABLE SPECIFIC CONSTANTS *******************
 	// URI's for remarkable cloud endpoints which can be overridden
 	DocHost  = "https://document-storage-production-dot-remarkable-production.appspot.com"
 	AuthHost = "https://webapp-prod.cloud.remarkable.engineering"
@@ -30,8 +35,11 @@ const (
 	UserTokenSecName   = "user-token"
 	DefaultDeviceDesc  = "desktop-linux"
 
-	// Constants related to CLI and Config
-	EnvPrefix = "EM_"
+	// Constants related to remarkable nodes and documents
+	DirectoryType = "CollectionType"
+	DocumentType  = "DocumentType"
+
+	// ******************* EVERNOTE CONSTANTS *******************
 )
 
 var (
