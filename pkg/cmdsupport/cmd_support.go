@@ -42,7 +42,7 @@ func LoadConfigFile(config *model.EMRootConfig) error {
 
 	viper.AutomaticEnv()
 
-	if err := viper.ReadInConfig(); err == nil {
+	if err := viper.ReadInConfig(); err != nil {
 		if _, ok := err.(viper.ConfigFileNotFoundError); ok {
 			klog.Infof("No config file was found at %s, skipping...", config.ConfigPath)
 		} else {

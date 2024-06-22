@@ -4,11 +4,13 @@ package api
 // for all of @juruen's work that he did for years on the rmapi project!
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/aauren/evermarkable/internal/keyring"
 	"github.com/aauren/evermarkable/pkg/cli"
 	"github.com/aauren/evermarkable/pkg/model"
+	"github.com/golang-jwt/jwt"
 	"github.com/google/uuid"
 	"k8s.io/klog/v2"
 )
@@ -22,6 +24,15 @@ type deviceTokenRequest struct {
 	Code       string `json:"code"`
 	DeviceDesc string `json:"deviceDesc"`
 	DeviceID   string `json:"deviceID"`
+}
+
+type UserTokenJWT struct {
+	Auth0 struct {
+		UserID string
+		Email  string
+	} `json:"auth0-profile"`
+	Scopes string
+	*jwt.StandardClaims
 }
 
 func AuthenticateHTTP(httpClientCtx *HTTPClientCtx, reAuth bool) error {
@@ -83,6 +94,39 @@ func LoadTokens() (*authToken, error) {
 	token.deviceToken = devTok
 	token.userToken = userTok
 	return &token, nil
+}
+
+// EnsureAuthenticated ensures that the tokens are loaded, valid, and not expired.
+// If the tokens are missing or expired, it re-authenticates.
+func EnsureAuthenticated(ctx context.Context) (*HTTPClientCtx, error) {
+	tokens, err := LoadTokens()
+	if err != nil {
+		klog.Errorf("could not load tokens from os keyring: %v", err)
+		return nil, err
+	}
+
+	httpClientCtx, err := CreateHTTPClientCtx(tokens, ctx)
+	if err != nil {
+		klog.Errorf("could not create HTTP client ctx: %v", err)
+		return nil, err
+	}
+
+	expired, err := tokens.IsExpired()
+	if err != nil {
+		klog.Errorf("could not check if token is expired: %v", err)
+		return nil, err
+	}
+
+	if tokens.Missing() || expired {
+		klog.Infof("Tokens are missing or expired, re-authenticating")
+		err = AuthenticateHTTP(httpClientCtx, true)
+		if err != nil {
+			klog.Errorf("could not authenticate HTTP: %v", err)
+			return nil, err
+		}
+	}
+
+	return httpClientCtx, nil
 }
 
 func newDeviceToken(http *HTTPClientCtx, code string) (string, error) {
@@ -147,18 +191,4 @@ func refreshUserToken(httpClientCtx *HTTPClientCtx, token *authToken) error {
 	token.userToken = userToken
 
 	return keyring.SaveSecretInStore(model.UserTokenSecName, userToken)
-}
-
-func getURLProviderFromCtx(httpClientCtx *HTTPClientCtx) (model.EMURLProvider, error) {
-	cfgRaw := httpClientCtx.Context.Value(model.ContextConfigSet)
-	if cfgRaw == nil {
-		return nil, fmt.Errorf("didn't find config on the HTTPClientCtx context")
-	}
-
-	cfg, ok := cfgRaw.(model.EMRootConfig)
-	if !ok {
-		return nil, fmt.Errorf("config stored in HTTPClientCtx context did not appear to be instance of EMRootConfig")
-	}
-
-	return cfg.Config.URLs, nil
 }

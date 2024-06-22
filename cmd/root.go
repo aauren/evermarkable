@@ -13,7 +13,6 @@ var (
 	RootCmd = &cobra.Command{
 		Use:   "evermarkable",
 		Short: "evermarkable is a simple way to sync your documents between Remarkable and Evernote",
-
 	}
 )
 

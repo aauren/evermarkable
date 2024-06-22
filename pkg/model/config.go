@@ -6,7 +6,19 @@ type EMRootConfig struct {
 }
 
 type EMConfigFile struct {
-	URLs EMURLConfig `yaml:"urls"`
+	Remarkable EMRemarkableConfig
+}
+
+type EMRemarkableConfig struct {
+	URLs        EMURLConfig `yaml:"urls"`
+	Concurrency int
+}
+
+func (e EMRemarkableConfig) GetRemConcurrency() int {
+	if e.Concurrency == 0 {
+		return RemDefaultConcurrency
+	}
+	return e.Concurrency
 }
 
 type EMURLConfig struct {

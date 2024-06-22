@@ -3,7 +3,12 @@ package model
 const (
 	// ******************* GENERAL CONSTANTS *******************
 	// Constants related to CLI and Config
-	EnvPrefix = "EM_"
+	EnvPrefix                 = "EM_"
+	EMAppName                 = "evermarkable"
+	EMDefaultCacheDirModeSet  = 0700
+	EMDTCacheFile             = "dt.cache"
+	EMDefaultCacheFileModeSet = 0600
+	EMCacheVersion            = 3
 
 	// ******************* REMARKABLE SPECIFIC CONSTANTS *******************
 	// URI's for remarkable cloud endpoints which can be overridden
@@ -38,6 +43,10 @@ const (
 	// Constants related to remarkable nodes and documents
 	DirectoryType = "CollectionType"
 	DocumentType  = "DocumentType"
+
+	// The root path name for the remarkable cloud
+	RemRootPathName       = "root"
+	RemDefaultConcurrency = 99
 
 	// ******************* EVERNOTE CONSTANTS *******************
 )
