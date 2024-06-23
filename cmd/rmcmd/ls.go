@@ -1,6 +1,7 @@
 package rmcmd
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/aauren/evermarkable/pkg/cmdsupport"
@@ -60,10 +61,14 @@ func LSRun(cobraCmd *cobra.Command, args []string) {
 	klog.V(1).Info("Node by path found")
 
 	if node.IsFile() {
-		klog.Infof("node is file: %s", node.Name())
+		fmt.Printf("node is file: %s", node.Name())
 	}
 
 	for _, e := range node.Children {
-		klog.Infof("entry: %s", e.Name())
+		eType := "d"
+		if e.IsFile() {
+			eType = "f"
+		}
+		fmt.Printf("[%s]\t%s\n", eType, e.Name())
 	}
 }
