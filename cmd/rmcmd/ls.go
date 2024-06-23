@@ -6,7 +6,6 @@ import (
 
 	"github.com/aauren/evermarkable/pkg/cmdsupport"
 	"github.com/aauren/evermarkable/pkg/remarkable/api"
-	"github.com/juruen/rmapi/model"
 	"github.com/spf13/cobra"
 	"k8s.io/klog/v2"
 )
@@ -36,26 +35,10 @@ func LSRun(cobraCmd *cobra.Command, args []string) {
 		os.Exit(1)
 	}
 
-	ft, err := api.CreateCacheTree(httpClientCtx)
+	node, err := api.GetNodeByPath(httpClientCtx, path)
 	if err != nil {
-		klog.Errorf("could not create cache tree: %v", err)
+		klog.Errorf("could not get node by path: %v", err)
 		os.Exit(2)
-	}
-
-	klog.V(1).Infof("looking at path: %s", path)
-
-	rootNode := model.CreateNode(model.Document{
-		ID:           "",
-		Type:         "CollectionType",
-		VissibleName: "/",
-	})
-
-	klog.V(1).Info("Getting node by path")
-
-	node, err := ft.NodeByPath(path, &rootNode)
-	if err != nil {
-		klog.Errorf("could not find node: %v", err)
-		os.Exit(3)
 	}
 
 	klog.V(1).Info("Node by path found")
