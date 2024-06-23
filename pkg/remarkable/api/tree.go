@@ -8,7 +8,6 @@ import (
 
 	"github.com/aauren/evermarkable/pkg/model"
 	"github.com/juruen/rmapi/api/sync15"
-	"github.com/juruen/rmapi/filetree"
 	"k8s.io/klog/v2"
 )
 
@@ -68,7 +67,7 @@ func SaveTree(tree *sync15.HashTree) error {
 	return err
 }
 
-func CreateCacheTree(blobStorage BlobEMConfigHolder) (*filetree.FileTreeCtx, error) {
+func CreateCacheTree(blobStorage BlobEMConfigHolder) (*sync15.HashTree, error) {
 	config, err := blobStorage.GetEMConfig()
 	if err != nil {
 		return nil, fmt.Errorf("could not get remarkable config: %v", err)
@@ -93,8 +92,5 @@ func CreateCacheTree(blobStorage BlobEMConfigHolder) (*filetree.FileTreeCtx, err
 	}
 	klog.V(1).Info("Tree has been saved")
 
-	ft := sync15.DocumentsFileTree(cacheTree)
-	klog.V(1).Info("File Tree obtained")
-
-	return ft, nil
+	return cacheTree, nil
 }
