@@ -44,7 +44,7 @@ func LoadConfigFile(config *model.EMRootConfig) error {
 
 	if err := viper.ReadInConfig(); err != nil {
 		if _, ok := err.(viper.ConfigFileNotFoundError); ok {
-			klog.Infof("No config file was found at %s, skipping...", config.ConfigPath)
+			klog.V(1).Infof("No config file was found at %s, skipping...", config.ConfigPath)
 		} else {
 			return fmt.Errorf("there was an error reading the config: %v", err)
 		}
