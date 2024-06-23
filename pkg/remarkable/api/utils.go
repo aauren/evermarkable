@@ -24,7 +24,7 @@ func (a *authToken) IsExpired() (bool, error) {
 		return false, nil
 	}
 
-	return false, nil
+	return true, nil
 }
 
 func getRemarkableConfigFromCtx(httpClientCtx *HTTPClientCtx) (*model.EMRemarkableConfig, error) {
