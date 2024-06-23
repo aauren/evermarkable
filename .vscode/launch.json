@@ -5,7 +5,15 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Run Remarkable Auth",
+            "name": "ls",
+            "mode": "debug",
+            "type": "go",
+            "request": "launch",
+            "program": "${workspaceFolder}",
+            "args": ["rem", "ls", "/"],
+        },
+        {
+            "name": "auth",
             "mode": "debug",
             "type": "go",
             "request": "launch",
