@@ -35,7 +35,9 @@ func LSRun(cobraCmd *cobra.Command, args []string) {
 		os.Exit(1)
 	}
 
-	node, err := api.GetNodeByPath(httpClientCtx, path)
+	blobStorage := api.NewBlobStorage(httpClientCtx)
+
+	node, err := api.GetNodeByPath(blobStorage, path)
 	if err != nil {
 		klog.Errorf("could not get node by path: %v", err)
 		os.Exit(2)

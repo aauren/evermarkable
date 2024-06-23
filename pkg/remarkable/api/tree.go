@@ -68,13 +68,12 @@ func SaveTree(tree *sync15.HashTree) error {
 	return err
 }
 
-func CreateCacheTree(httpClientCtx *HTTPClientCtx) (*filetree.FileTreeCtx, error) {
-	remConfig, err := getRemarkableConfigFromCtx(httpClientCtx)
+func CreateCacheTree(blobStorage BlobEMConfigHolder) (*filetree.FileTreeCtx, error) {
+	config, err := blobStorage.GetEMConfig()
 	if err != nil {
 		return nil, fmt.Errorf("could not get remarkable config: %v", err)
 	}
 
-	blobStorage := NewBlobStorage(httpClientCtx)
 	cacheTree, err := loadCacheTree()
 	if err != nil {
 		return nil, fmt.Errorf("could not load cache tree: %v", err)
@@ -82,7 +81,7 @@ func CreateCacheTree(httpClientCtx *HTTPClientCtx) (*filetree.FileTreeCtx, error
 
 	klog.V(1).Info("Mirroring docs")
 
-	err = cacheTree.Mirror(blobStorage, remConfig.GetRemConcurrency())
+	err = cacheTree.Mirror(blobStorage.GetBlobStorage(), config.Remarkable.GetConcurrency())
 	if err != nil {
 		return nil, fmt.Errorf("could not Mirror tree: %v", err)
 	}

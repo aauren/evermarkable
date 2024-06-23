@@ -12,6 +12,11 @@ import (
 	"k8s.io/klog/v2"
 )
 
+type BlobEMConfigHolder interface {
+	model.EMConfigHolder
+	GetBlobStorage() *BlobStorage
+}
+
 type BlobStorage struct {
 	http *HTTPClientCtx
 }
@@ -36,10 +41,12 @@ func (b *BlobStorage) GetReader(hash string) (io.ReadCloser, error) {
 func (b *BlobStorage) GetURL(hash string) (string, error) {
 	klog.V(2).Infof("fetching GET blob url for: %s", hash)
 
-	urls, err := getURLProviderFromCtx(b.http)
+	emConf, err := b.GetEMConfig()
 	if err != nil {
 		return "", err
 	}
+
+	urls := emConf.Remarkable.GetURLProvider()
 
 	var req model.BlobStorageRequest
 	var res model.BlobStorageResponse
@@ -72,4 +79,19 @@ func (b *BlobStorage) GetRootIndex() (string, int64, error) {
 	klog.V(1).Infof("got root gen: %d", gen)
 	return string(content), gen, nil
 
+}
+
+// GetBlobStorage returns the BlobStorage instance and implements the BlobEMContextStorer interface
+func (b *BlobStorage) GetBlobStorage() *BlobStorage {
+	return b
+}
+
+// GetEMConfig returns the EMConfig and implements the BlobEMContextStorer interface
+func (b *BlobStorage) GetEMConfig() (*model.EMConfig, error) {
+	return b.http.GetEMConfig()
+}
+
+// GetURLProvider returns the URLProvider and implements the URLProviderHolder interface
+func (b *BlobStorage) GetURLProvider() (model.URLProvider, error) {
+	return b.http.GetURLProvider()
 }

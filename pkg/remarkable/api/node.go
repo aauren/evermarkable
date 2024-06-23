@@ -7,8 +7,8 @@ import (
 	"k8s.io/klog/v2"
 )
 
-func GetNodeByPath(httpClientCtx *HTTPClientCtx, path string) (*model.Node, error) {
-	ft, err := CreateCacheTree(httpClientCtx)
+func GetNodeByPath(blobStorage BlobEMConfigHolder, path string) (*model.Node, error) {
+	ft, err := CreateCacheTree(blobStorage)
 	if err != nil {
 		return nil, fmt.Errorf("could not create cache tree: %v", err)
 	}

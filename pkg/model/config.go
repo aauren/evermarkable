@@ -2,10 +2,10 @@ package model
 
 type EMRootConfig struct {
 	ConfigPath string
-	Config     EMConfigFile
+	Config     EMConfig
 }
 
-type EMConfigFile struct {
+type EMConfig struct {
 	Remarkable EMRemarkableConfig
 }
 
@@ -14,11 +14,15 @@ type EMRemarkableConfig struct {
 	Concurrency int
 }
 
-func (e EMRemarkableConfig) GetRemConcurrency() int {
+func (e EMRemarkableConfig) GetConcurrency() int {
 	if e.Concurrency == 0 {
 		return RemDefaultConcurrency
 	}
 	return e.Concurrency
+}
+
+func (e EMRemarkableConfig) GetURLProvider() URLProvider {
+	return e.URLs
 }
 
 type EMURLConfig struct {

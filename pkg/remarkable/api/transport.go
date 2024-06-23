@@ -250,3 +250,31 @@ func (ctx HTTPClientCtx) GetBlobStream(url string) (io.ReadCloser, int64, error)
 
 	return response.Body, gen, err
 }
+
+func (ctx *HTTPClientCtx) GetEMConfig() (*model.EMConfig, error) {
+	cfgRaw := ctx.Context.Value(model.ContextConfigSet)
+	if cfgRaw == nil {
+		return nil, fmt.Errorf("didn't find config on the HTTPClientCtx context")
+	}
+
+	cfg, ok := cfgRaw.(model.EMRootConfig)
+	if !ok {
+		return nil, fmt.Errorf("config stored in HTTPClientCtx context did not appear to be instance of EMRootConfig")
+	}
+
+	return &cfg.Config, nil
+}
+
+func (ctx *HTTPClientCtx) GetURLProvider() (model.URLProvider, error) {
+	cfgRaw := ctx.Context.Value(model.ContextConfigSet)
+	if cfgRaw == nil {
+		return nil, fmt.Errorf("didn't find config on the HTTPClientCtx context")
+	}
+
+	cfg, ok := cfgRaw.(model.EMRootConfig)
+	if !ok {
+		return nil, fmt.Errorf("config stored in HTTPClientCtx context did not appear to be instance of EMRootConfig")
+	}
+
+	return cfg.Config.Remarkable.GetURLProvider(), nil
+}

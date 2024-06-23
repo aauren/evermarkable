@@ -134,7 +134,7 @@ func newDeviceToken(http *HTTPClientCtx, code string) (string, error) {
 
 	req := deviceTokenRequest{code, model.DefaultDeviceDesc, uuid.String()}
 
-	urlProv, err := getURLProviderFromCtx(http)
+	urlProv, err := http.GetURLProvider()
 	if err != nil {
 		return "", err
 	}
@@ -150,7 +150,7 @@ func newDeviceToken(http *HTTPClientCtx, code string) (string, error) {
 }
 
 func newUserToken(http *HTTPClientCtx) (string, error) {
-	urlProv, err := getURLProviderFromCtx(http)
+	urlProv, err := http.GetURLProvider()
 	if err != nil {
 		return "", err
 	}
